@@ -9,6 +9,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState } from "react";
+import Dashboard from "./pages/Dashboard";
+import Createtasks from "./pages/Createtasks";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,7 +27,8 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            isAuthenticated ? <h1>Dashboard</h1> : <Navigate to="/signin" />
+            // isAuthenticated ? <h1>Dashboard</h1> : <Navigate to="/signin" />
+            <Dashboard></Dashboard>
           }
         />
         <Route
@@ -33,11 +36,16 @@ function App() {
           element={isAuthenticated ? <h1>Tasks</h1> : <Navigate to="/signin" />}
         />
         <Route
+          path="/createtask"
+          // element={isAuthenticated ? <h1>Tasks</h1> : <Navigate to="/signin" />}
+          element={<Createtasks></Createtasks>}
+        />
+        <Route
           path="/"
           element={<Navigate to={isAuthenticated ? "/dashboard" : "/signin"} />}
         />
       </Routes>
-      <h1 className="text-amber-200">hello</h1>
+      {/* <h1 className="text-amber-200">hello</h1> */}
     </Router>
   );
 }
