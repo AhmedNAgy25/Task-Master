@@ -9,6 +9,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState } from "react";
+import Tasks from "./pages/Tasks";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -30,14 +31,16 @@ function App() {
         />
         <Route
           path="/tasks"
-          element={isAuthenticated ? <h1>Tasks</h1> : <Navigate to="/signin" />}
+          // element={isAuthenticated ? <Tasks /> : <Navigate to="/signin" />}
+          
+          element={ <Tasks></Tasks>}
         />
         <Route
           path="/"
           element={<Navigate to={isAuthenticated ? "/dashboard" : "/signin"} />}
         />
       </Routes>
-      <h1 className="text-amber-200">hello</h1>
+      <h1 className="text-amber-200">.</h1>
     </Router>
   );
 }
