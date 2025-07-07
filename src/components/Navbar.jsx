@@ -3,7 +3,7 @@ export default function Navbar({ isAuthenticated, signOut }) {
   const { pathname } = useLocation();
 
   return (
-    <div className="navbar-container">
+    <div className="navbar-container bg-amber-300">
       <div className="logo-container">
         <div className="logo-icon">⏳</div>
         <div className="logo-text">TaskMaster</div>
