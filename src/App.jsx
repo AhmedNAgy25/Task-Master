@@ -9,6 +9,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState } from "react";
+import Dashboard from "./pages/Dashboard";
+import Createtasks from "./pages/Createtasks";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,12 +27,25 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            isAuthenticated ? <h1>Dashboard</h1> : <Navigate to="/signin" />
+            // isAuthenticated ? <h1>Dashboard</h1> : <Navigate to="/signin" />
+            <Dashboard></Dashboard>
           }
         />
         <Route
           path="/tasks"
-          element={isAuthenticated ? <h1>Tasks</h1> : <Navigate to="/signin" />}
+          // element={isAuthenticated ? <Tasks /> : <Navigate to="/signin" />}
+          
+          element={ <Tasks></Tasks>}
+        />
+        <Route
+          path="/createtask"
+          // element={isAuthenticated ? <h1>Tasks</h1> : <Navigate to="/signin" />}
+          element={<Createtasks></Createtasks>}
+        />
+        <Route
+          path="/createtask"
+          // element={isAuthenticated ? <h1>Tasks</h1> : <Navigate to="/signin" />}
+          element={<Createtasks></Createtasks>}
         />
         <Route
           path="/"
