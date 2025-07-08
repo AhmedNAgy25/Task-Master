@@ -1,4 +1,8 @@
-import { useState } from "react";
+import "./App.css";
+import Navbar from "./components/Navbar";
+import Signin from "./pages/Signin";
+import Signup from "./pages/Signup";
+import Tasks from"./pages/Tasks";
 import {
   BrowserRouter as Router,
   Routes,
@@ -48,6 +52,7 @@ function App() {
           element={<Navigate to={isAuthenticated ? "/dashboard" : "/signin"} />}
         />
       </Routes>
+      
     </Router>
   );
 }
