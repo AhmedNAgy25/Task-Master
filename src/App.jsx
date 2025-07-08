@@ -1,14 +1,15 @@
-import "./App.css";
-import Navbar from "./components/Navbar";
-import Signin from "./pages/Signin";
-import Signup from "./pages/Signup";
+import { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-import { useState } from "react";
+import "./App.css";
+import Navbar from "./components/Navbar";
+import Signin from "./pages/Signin";
+import Signup from "./pages/Signup";
+import Tasks from "./pages/Tasks";
 import Dashboard from "./pages/Dashboard";
 import Createtasks from "./pages/Createtasks";
 
@@ -34,13 +35,8 @@ function App() {
         <Route
           path="/tasks"
           // element={isAuthenticated ? <Tasks /> : <Navigate to="/signin" />}
-          
-          element={ <Tasks></Tasks>}
-        />
-        <Route
-          path="/createtask"
-          // element={isAuthenticated ? <h1>Tasks</h1> : <Navigate to="/signin" />}
-          element={<Createtasks></Createtasks>}
+
+          element={<Tasks></Tasks>}
         />
         <Route
           path="/createtask"
@@ -52,7 +48,6 @@ function App() {
           element={<Navigate to={isAuthenticated ? "/dashboard" : "/signin"} />}
         />
       </Routes>
-      <h1 className="text-amber-200">hello</h1>
     </Router>
   );
 }
