@@ -37,7 +37,7 @@ function App() {
           element={<Navigate to={isAuthenticated ? "/dashboard" : "/signin"} />}
         />
       </Routes>
-      <h1 className="text-amber-200">hello</h1>
+      
     </Router>
   );
 }
