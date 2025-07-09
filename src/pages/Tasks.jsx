@@ -6,33 +6,30 @@ export default function TasksPage() {
   const navigate = useNavigate();
 
   const tasks = [
-    { name: "add feature", date: "2025-03-25", status: "completed" },
     {
-      name: "edit routing system",
-      date: "2025-07-28",
+      name: "Review project proposal",
+      date: "2024-03-15",
       status: "inProgress",
     },
-    { name: "edit styling", date: "2025-03-25", status: "completed" },
     {
-      name: "fix logic",
-      date: "2025-02-28",
-      status: "inProgress",
+      name: "Prepare presentation slides",
+      date: "2024-03-20",
+      status: "completed",
     },
-    { name: "fix responsice", date: "2025-11-25", status: "inProgress" },
+    { name: "Schedule team meeting", date: "2024-03-22", status: "inProgress" },
+    { name: "Update client report", date: "2024-03-25", status: "completed" },
     {
-      name: "solve ton of conflicts",
-      date: "2025-03-18",
-      status: "inProgress",
-    },
-    { name: "go to iti", date: "2025-03-5", status: "completed" },
-    {
-      name: "i add anything",
-      date: "2025-09-8",
+      name: "Follow up with vendors",
+      date: "2024-03-28",
       status: "inProgress",
     },
   ];
 
-  const taskTabs = ["allTasks", "inProgress", "completed"];
+  const taskTabs = [
+    { key: "allTasks", label: "All Tasks" },
+    { key: "inProgress", label: "In Progress" },
+    { key: "completed", label: "Completed" },
+  ];
 
   const filteredTasks =
     activeTab === "allTasks"
@@ -48,51 +45,98 @@ export default function TasksPage() {
   };
 
   return (
-    <div>
-      <button className="new-task-btn bg-[#2D2D2D] hover:bg-[#3A3A3A] text-white px-4 py-2 rounded-md shadow-md text-sm float-right mb-6 font-sans" onClick={handleNewTask}>
-        New Task
-      </button>
-      <div className="tasksContainer bg-[#121417] text-[#ffffff] py-5 px-40">
-        <h2 className="page-title text-3xl font-bold mb-4 text-white font-sans bg-[#121417]">My Tasks</h2>
-
-        <div className="tabs flex space-x-6 border-b border-gray-600 mb-6 font-sans bg-[#121417]">
+    <div className="min-h-screen bg-[#181A1B] px-2 sm:px-4 py-8">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8 gap-4">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+            My Tasks
+          </h2>
+          <button
+            className="bg-[#1A80E5] text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-[#1980E5] transition w-fit self-end sm:self-auto"
+            onClick={handleNewTask}
+          >
+            New Task
+          </button>
+        </div>
+        <div className="flex space-x-6 border-b border-[#23272f] mb-6">
           {taskTabs.map((tab) => (
             <button
-              key={tab}
-              className={`tab-btn pb-2 text-sm capitalize font-medium transition-all duration-200 ${activeTab === tab ? "active" : ""}`}
-              onClick={() => setActiveTab(tab)}
+              key={tab.key}
+              className={`pb-2 text-base font-semibold transition-colors relative ${
+                activeTab === tab.key
+                  ? "text-white after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-white"
+                  : "text-[#9EABB8] hover:text-white"
+              }`}
+              onClick={() => setActiveTab(tab.key)}
             >
-              {tab}
+              {tab.label}
             </button>
           ))}
         </div>
-<div className="flex justify-center">
-  <table className="taskTable ..."></table>
-</div>
-        <table className="taskTable table-auto text-left text-sm sm:w-full w-[960px] py-3 px-4 ">
-          <thead>
-            <tr className="bg-[#2A2A2A] text-white border-b border-gray-600">
-              <th className="px-6 py-3 font-medium">Task</th>
-            <th className="px-6 py-3 font-medium">End Date</th>
-            <th className="px-6 py-3 font-medium">Edit</th>
-            <th className="px-6 py-3 font-medium text-center">Status</th>
-            </tr>
-          </thead>
-          <tbody className="min-h-[300px] max-h-[400px] overflow-auto">
-            {filteredTasks.map((task, index) => (
-                  <tr key={index} className="border-b border-gray-600 bg-[#121417]">
-              <td className="px-6 py-5 text-base text-white">{task.name}</td>
-              <td className="px-6 py-5 text-base text-white">{task.date}</td>
-              <td className="px-6 py-5 text-base text-white cursor-pointer" onClick={handleEditTask}>✏️</td>
-              <td className="px-6 py-5 text-center">
-                <span className="text-white text-sm font-semibold bg-[#2D2D2D] px-6 py-2 rounded-xl inline-block">
-                  {task.status}
-                </span>
-              </td>
-            </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-[#181b20] rounded-xl text-left border-separate border-spacing-0">
+            <thead>
+              <tr className="bg-[#23272f] text-[#9EABB8]">
+                <th className="px-6 py-4 font-semibold rounded-tl-xl">Task</th>
+                <th className="px-6 py-4 font-semibold">End Date</th>
+                <th className="px-6 py-4 font-semibold">Edit</th>
+                <th className="px-6 py-4 font-semibold rounded-tr-xl">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTasks.map((task, index) => (
+                <tr
+                  key={index}
+                  className="border-b border-[#23272f] last:border-b-0 hover:bg-[#202225] transition"
+                >
+                  <td className="px-6 py-5 text-base text-white whitespace-nowrap">
+                    {task.name}
+                  </td>
+                  <td className="px-6 py-5 text-base text-[#9EABB8] whitespace-nowrap">
+                    {task.date}
+                  </td>
+                  <td className="px-6 py-5 text-center">
+                    <button
+                      onClick={() => handleEditTask(index)}
+                      className="border border-[#9EABB8] rounded-lg p-2 hover:bg-[#5d6472] hover:border-[#ffffff] transition"
+                      title="Edit task"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6 text-[#9EABB8] hover:text-white"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M16.862 4.487a2.1 2.1 0 1 1 2.97 2.97L8.978 18.312a4.2 4.2 0 0 1-1.768 1.06l-3.07.92.92-3.07a4.2 4.2 0 0 1 1.06-1.768L16.862 4.487ZM16.862 4.487l2.65 2.65"
+                        />
+                      </svg>
+                    </button>
+                  </td>
+                  <td className="px-6 py-5 text-center">
+                    <span
+                      className={`inline-block rounded-full px-6 py-2 font-semibold text-sm ${
+                        task.status === "completed"
+                          ? "bg-[#23272f] text-white"
+                          : "bg-[#23272f] text-white"
+                      }`}
+                    >
+                      {task.status === "inProgress"
+                        ? "In Progress"
+                        : "Completed"}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

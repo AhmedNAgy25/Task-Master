@@ -4,34 +4,31 @@ export default function Navbar({ isAuthenticated, signOut }) {
   const { pathname } = useLocation();
 
   return (
-    <nav className=" sm:w-full w-[1280px] h-16 border-b border-gray-700 px-4 sm:px-8 py-3 bg-[#121417] flex justify-between items-center">
-      <div className="flex items-center gap-4">
-        <div className="text-white text-xl pb-[4px]">⏳</div>
-        <div className="font-bold text-lg text-white">TaskMaster</div>
+    <nav className="w-full h-16 border-b border-[#23272f] px-4 md:px-10 py-3 bg-[#121417] flex justify-between items-center">
+      <div className="flex items-center gap-3 md:gap-4">
+        <div className="text-white text-xl">⏳</div>
+        <div className="font-bold text-lg md:text-xl text-white tracking-wide">
+          TaskMaster
+        </div>
       </div>
-
-      <div className="flex items-center gap-4">
-        {/* {isAuthenticated ? ( */
-        /*jsut for testig and navigation easly while styling*/}
-        {!isAuthenticated ? (
+      <div className="flex items-center gap-2 md:gap-4">
+        {isAuthenticated ? (
           <>
-            <div className="navigator">
-              <Link
-                to="/dashboard"
-                className="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-gray-800"
-              >
-                Dashboard
-              </Link>
-              <Link
-                to="/tasks"
-                className="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-gray-800"
-              >
-                Tasks
-              </Link>
-            </div>
+            <Link
+              to="/dashboard"
+              className="text-[#9EABB8] hover:text-white transition-colors px-2 md:px-3 py-2 rounded-lg hover:bg-[#23272f] font-medium"
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/tasks"
+              className="text-[#9EABB8] hover:text-white transition-colors px-2 md:px-3 py-2 rounded-lg hover:bg-[#23272f] font-medium"
+            >
+              Tasks
+            </Link>
             <button
               onClick={signOut}
-              className="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-gray-800"
+              className="text-[#9EABB8] hover:text-white transition-colors px-2 md:px-3 py-2 rounded-lg hover:bg-[#23272f] font-medium"
             >
               Sign out
             </button>

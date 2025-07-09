@@ -1,25 +1,41 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Signin() {
+export default function Signin({ onSignIn, isAuthenticated }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  if (isAuthenticated) {
+    navigate("/tasks");
+    return null;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setIsLoading(true);
     if (!formData.email || !formData.password) {
       setError("Please enter both email and password.");
+      setIsLoading(false);
       return;
     }
-    setError("");
+    const result = onSignIn(formData.email, formData.password);
+    if (result.success) {
+      navigate("/dashboard");
+    } else {
+      setError(result.error || "Login failed. Please try again.");
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -49,6 +65,7 @@ export default function Signin() {
               autoComplete="email"
               value={formData.email}
               onChange={handleChange}
+              disabled={isLoading}
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -67,16 +84,18 @@ export default function Signin() {
               autoComplete="current-password"
               value={formData.password}
               onChange={handleChange}
+              disabled={isLoading}
             />
           </div>
           {error && (
             <div className="text-red-400 text-sm text-center">{error}</div>
           )}
           <button
-            className="w-full py-3 mt-2 bg-[#1a80e5] text-white rounded-xl font-semibold hover:bg-[#176fc2] transition-colors"
+            className="w-full py-3 mt-2 bg-[#1a80e5] text-white rounded-xl font-semibold hover:bg-[#176fc2] transition-colors disabled:opacity-50"
             type="submit"
+            disabled={isLoading}
           >
-            Sign in
+            {isLoading ? "Signing in..." : "Sign in"}
           </button>
         </form>
         <div className="mt-6 text-center text-[#9EABB8] text-sm">
