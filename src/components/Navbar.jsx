@@ -4,7 +4,7 @@ export default function Navbar({ isAuthenticated, signOut }) {
   const { pathname } = useLocation();
 
   return (
-    <nav className="w-full h-16 border-b border-gray-700 px-4 sm:px-8 py-3 bg-[#121417] flex justify-between items-center">
+    <nav className=" sm:w-full w-[1280px] h-16 border-b border-gray-700 px-4 sm:px-8 py-3 bg-[#121417] flex justify-between items-center">
       <div className="flex items-center gap-4">
         <div className="text-white text-xl pb-[4px]">⏳</div>
         <div className="font-bold text-lg text-white">TaskMaster</div>
