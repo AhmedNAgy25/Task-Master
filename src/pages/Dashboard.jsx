@@ -1,5 +1,3 @@
-import React from "react";
-
 function Dashboard() {
   const stats = [
     { label: "Total Tasks", value: 120 },
@@ -20,14 +18,13 @@ function Dashboard() {
       <div className="cards-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {stats.map((stat, index) => {
           return (
-            <div className="card bg-[#293038] rounded-xl h-[100px] flex flex-col justify-center items-center" key={index}>
+            <div className="card bg-[#293038] rounded-xl h-[120px] flex flex-col justify-center items-center" key={index}>
               <div className="card-name text-base font-medium">{stat.label}</div>
               <div className="card-number text-2xl font-bold">{stat.value}</div>
             </div>
           );
         })}
       </div>
-      <h2 className="text-[22px] font-bold">Task Overview</h2>
     </div>
     </>
   );  

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const tasks = [
@@ -80,7 +80,7 @@ function EditTask() {
       console.log("Task updated:", task);
       setIsLoading(false);
       navigate("/tasks");
-    }, 1000); 
+    }, 1000);
   };
 
   const handleCancel = () => {
@@ -101,97 +101,113 @@ function EditTask() {
 
   return (
     <>
-     <div className="sm:w-full w-[1280px] h-[778px] bg-[#121417] py-5 px-40 ">
-      <div className="edit-task-header sm:w-full w-[960px] h-[105px] flex justify-between flex-col p-4 ">
-        <h2 className="sm:w-full w-[301px] h-[40px] font-bold text-[32px] leading-10 tracking-normal text-[#ffffff]">Edit Task</h2>
-        <p className="sm:w-full w-[303px] h-[21px] font-normal text-sm leading-[21px] tracking-normal text-[#9eabb8]">Update the task details below</p>
+      <div className="sm:w-full w-[1280px] h-svh bg-[#121417] py-5 px-40 ">
+        <div className="edit-task-header sm:w-full w-[960px] h-[105px] flex justify-between flex-col p-4 ">
+          <h2 className="sm:w-full w-[301px] h-[40px] font-bold text-[32px] leading-10 tracking-normal text-[#ffffff]">
+            Edit Task
+          </h2>
+          <p className="sm:w-full w-[303px] h-[21px] font-normal text-sm leading-[21px] tracking-normal text-[#9eabb8]">
+            Update the task details below
+          </p>
+        </div>
+
+        <form className="edittask-form" onSubmit={handleSubmit}>
+          <div className="input-scope sm:w-full max-w-[480px] h-[88px] py-3 px-4 gap-4 ">
+            <label className="edittask-label  sm:w-full w-[448px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block">
+              Task Title
+            </label>
+            <input
+              name="title"
+              className="edittask-input sm:w-full max-w-[448px] h-8 rounded-xl p-4 bg-[#293038] text-[#ffffff]"
+              type="text"
+              placeholder="Enter task title"
+              value={task.title}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="input-scope sm:w-full max-w-[480px] h-[88px] py-3 px-4 gap-4">
+            <label className="edittask-label sm:w-full w-[448px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block">
+              Status
+            </label>
+            <select
+              name="status "
+              className="edittask-input sm:w-full max-w-[448px] h-8 rounded-xl p-4 bg-[#293038] text-[#ffffff] "
+              value={task.status}
+              onChange={handleChange}
+              disabled={isLoading}
+            >
+              <option value="inProgress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <div className="input-scope sm:w-full max-w-[480px] h-[200px] py-3 px-4 gap-4">
+            <label className="edittask-label sm:w-full w-[448px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block">
+              Description
+            </label>
+            <textarea
+              name="description "
+              className="edittask-input sm:w-full max-w-[448px] h-[144px] rounded-xl p-4 bg-[#293038] text-[#ffffff]"
+              placeholder="Enter task description"
+              value={task.description}
+              onChange={handleChange}
+              disabled={isLoading}
+              rows="4"
+            />
+          </div>
+
+          <div className="input-scope sm:w-full max-w-[218px] h-[88px] py-3 px-4 gap-4 inline-block">
+            <label className="edittask-label sm:w-full w-[218px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block ">
+              Start Date
+            </label>
+            <input
+              name="startDate"
+              className="edittask-input sm:w-full w-[216px] h-8 rounded-xl p-4 bg-[#283038] text-[#9EABB8]"
+              type="date"
+              placeholder="Enter task start date"
+              value={task.startDate}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="input-scope sm:w-full max-w-[218px] h-[88px] py-3 px-4 gap-4 inline-block">
+            <label className="edittask-label sm:w-full w-[218px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block">
+              End Date
+            </label>
+            <input
+              name="endDate"
+              className="edittask-input sm:w-full w-[216px] h-8 rounded-xl p-4 bg-[#283038] text-[#9EABB8]"
+              type="date"
+              placeholder="Enter task end date"
+              value={task.endDate}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
+
+          {error && <div className="edittask-error">{error}</div>}
+
+          <div className="form-actions text-white flex justify-items-start items-baseline gap-8 mt-6">
+            <button
+              type="button  "
+              className="cancel-btn bg-[#1A80E5] text-white font-medium px-6 py-2 rounded-lg hover:bg-[#176fc2] transition-colors"
+              onClick={handleCancel}
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+            <button
+              className="edittask-btn bg-[#1A80E5] text-white font-medium px-6 py-2 rounded-lg hover:bg-[#176fc2] transition-colors"
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? "Updating" : "Update Task"}
+            </button>
+          </div>
+        </form>
       </div>
-
-      <form className="edittask-form" onSubmit={handleSubmit}>
-        <div className="input-scope sm:w-full max-w-[480px] h-[88px] py-3 px-4 gap-4 ">
-          <label className="edittask-label  sm:w-full w-[448px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block">Task Title</label>
-          <input
-            name="title"
-            className="edittask-input sm:w-full max-w-[448px] h-8 rounded-xl p-4 bg-[#293038] text-[#ffffff]"
-            type="text"
-            placeholder="Enter task title"
-            value={task.title}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
-        </div>
-        <div className="input-scope sm:w-full max-w-[480px] h-[88px] py-3 px-4 gap-4">
-          <label className="edittask-label sm:w-full w-[448px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block">Status</label>
-          <select
-            name="status "
-            className="edittask-input sm:w-full max-w-[448px] h-8 rounded-xl p-4 bg-[#293038] text-[#ffffff] "
-            value={task.status}
-            onChange={handleChange}
-            disabled={isLoading}
-          >
-            <option value="inProgress">In Progress</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-       
-        <div className="input-scope sm:w-full max-w-[480px] h-[200px] py-3 px-4 gap-4">
-          <label className="edittask-label sm:w-full w-[448px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block">Description</label>
-          <textarea
-            name="description "
-            className="edittask-input sm:w-full max-w-[448px] h-[144px] rounded-xl p-4 bg-[#293038] text-[#ffffff]"
-            placeholder="Enter task description"
-            value={task.description}
-            onChange={handleChange}
-            disabled={isLoading}
-            rows="4"
-          />
-        </div>
-
-        <div className="input-scope sm:w-full max-w-[218px] h-[88px] py-3 px-4 gap-4 inline-block">
-          <label className="edittask-label sm:w-full w-[218px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block ">Start Date</label>
-          <input
-            name="startDate"
-            className="edittask-input sm:w-full w-[216px] h-8 rounded-xl p-4 bg-[#283038] text-[#9EABB8]"
-            type="date"
-            placeholder="Enter task start date"
-            value={task.startDate}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="input-scope sm:w-full max-w-[218px] h-[88px] py-3 px-4 gap-4 inline-block">
-          <label className="edittask-label sm:w-full w-[218px] h-8 font-medium text-lg leading-6 tracking-normal text-[#ffffff] block">End Date</label>
-          <input
-            name="endDate"
-            className="edittask-input sm:w-full w-[216px] h-8 rounded-xl p-4 bg-[#283038] text-[#9EABB8]"
-            type="date"
-            placeholder="Enter task end date"
-            value={task.endDate}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
-        </div>
-
-       
-
-        {error && <div className="edittask-error">{error}</div>}
-
-        <div className="form-actions text-white flex justify-items-start items-baseline gap-8 mt-6">
-          <button
-            type="button  "
-            className="cancel-btn bg-[#1A80E5] text-white font-medium px-6 py-2 rounded-lg hover:bg-[#176fc2] transition-colors"
-            onClick={handleCancel}
-            disabled={isLoading}
-          >
-            Cancel
-          </button>
-          <button className="edittask-btn bg-[#1A80E5] text-white font-medium px-6 py-2 rounded-lg hover:bg-[#176fc2] transition-colors" type="submit" disabled={isLoading}>
-            {isLoading ? "Updating" : "Update Task"}
-          </button>
-        </div>
-      </form>
-    </div>  
     </>
   );
 }
