@@ -80,7 +80,7 @@ function EditTask() {
       console.log("Task updated:", task);
       setIsLoading(false);
       navigate("/tasks");
-    }, 1000);
+    }, 1000); 
   };
 
   const handleCancel = () => {
