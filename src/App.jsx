@@ -1,8 +1,3 @@
-import "./App.css";
-import Navbar from "./components/Navbar";
-import Signin from "./pages/Signin";
-import Signup from "./pages/Signup";
-import Tasks from"./pages/Tasks";
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,6 +11,8 @@ import Signup from "./pages/Signup";
 import Tasks from "./pages/Tasks";
 import Dashboard from "./pages/Dashboard";
 import Createtasks from "./pages/Createtasks";
+import EditTask from "./pages/EditTask";
+import { useState } from "react";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -47,12 +44,12 @@ function App() {
           // element={isAuthenticated ? <h1>Tasks</h1> : <Navigate to="/signin" />}
           element={<Createtasks></Createtasks>}
         />
+        <Route path="/edittask/:taskIndex" element={<EditTask />} />
         <Route
           path="/"
           element={<Navigate to={isAuthenticated ? "/dashboard" : "/signin"} />}
         />
       </Routes>
-      
     </Router>
   );
 }

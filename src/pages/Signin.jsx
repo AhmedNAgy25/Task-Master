@@ -2,14 +2,20 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Signin() {
-  const [email, setemail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!email || !password) {
+    if (!formData.email || !formData.password) {
       setError("Please enter both email and password.");
       return;
     }
@@ -17,46 +23,72 @@ export default function Signin() {
   };
 
   return (
-    <div className="auth-container sm:w-full w-[703px]  h-[713px]  py-[20px] gap-y-[9px]  bg-[#121417]  text-[#ffffff] flex justify-center items-center flex-col">
-      <h2 className="auth-title  w-[671px]  h-[67px] pt-[20px] pb-[12px] px-[20px] text-center text-[18px] font-extrabold leading-[23px] tracking-normal font-inter">Welcome back</h2>
-      <form className="auth-form" onSubmit={handleSubmit}>
-        <div className="input-scope w-[480px] max-w-[480px] h-[112px] py-[12px] px-[16px] gap-4">
-          <label className="auth-label w-[448px] h-[35px] pb-[10px] font-medium text-[16px] leading-6 tracking-normal block">Email</label>
-          <input
-            className="auth-input w-[448px] h-[56px] rounded-[12px] p-4 bg-[#293038] font-normal text-[16px] leading-6 tracking-normal text-[#9eabb8]"
-            type="text"
-            placeholder="Enter your email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setemail(e.target.value)}
-          />
+    <main className="flex min-h-screen items-center justify-center bg-[#121417] px-4">
+      <section className="w-full max-w-md bg-[#181b20] rounded-2xl shadow-lg p-8 flex flex-col items-center">
+        <h2 className="text-2xl font-extrabold text-white mb-6 text-center font-inter">
+          Welcome back
+        </h2>
+        <form
+          className="w-full flex flex-col gap-4"
+          onSubmit={handleSubmit}
+          autoComplete="on"
+        >
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-[#9EABB8]"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              className="rounded-lg p-3 bg-[#23272f] text-[#9eabb8] focus:outline-none focus:ring-2 focus:ring-[#1a80e5]"
+              placeholder="Enter your email"
+              autoComplete="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-[#9EABB8]"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              className="rounded-lg p-3 bg-[#23272f] text-[#9eabb8] focus:outline-none focus:ring-2 focus:ring-[#1a80e5]"
+              placeholder="Enter your password"
+              autoComplete="current-password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
+          {error && (
+            <div className="text-red-400 text-sm text-center">{error}</div>
+          )}
+          <button
+            className="w-full py-3 mt-2 bg-[#1a80e5] text-white rounded-xl font-semibold hover:bg-[#176fc2] transition-colors"
+            type="submit"
+          >
+            Sign in
+          </button>
+        </form>
+        <div className="mt-6 text-center text-[#9EABB8] text-sm">
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className="underline text-[#1980E5] hover:text-[#176fc2]"
+          >
+            Sign up
+          </Link>
         </div>
-        <div className="input-scope w-[480px] max-w-[480px] h-[112px] py-[12px] px-[16px] gap-16">
-          <label className="auth-label auth-label w-[448px] h-[32px] pb-[8px] font-medium text-[16px] leading-6 tracking-normal block ">Password</label>
-          <input
-            className="auth-input w-[448px] h-[56px] rounded-[12px] p-4 bg-[#293038] font-normal text-[16px] leading-6 tracking-normal text-[#9eabb8]"
-            type="password"
-            placeholder="Entr your password"
-            autoComplete="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        {error && <div className="auth-error">{error}</div>}
-        <div className="w-[480px] h-[64px] py-[12px] px-4">
-        <button className="auth-btn min-w-[84px] w-[451px] max-w-[480px] h-[64px] py-[12px] px-4  bg-[#1a80e5] rounded-xl" type="submit">
-          Sign in
-        </button>
-        </div>
-      </form>
-      <div className="auth-footer w-[703px] h-[37px] pt-1 pb-3 px-4 mt-6 ">
-       <div className="w-[671px] h-[21px] font-normal text-[14px] leading-[21px] tracking-normal flex justify-center items-center text-[#9EABB8]"> 
-        Don't have an account?
-         <Link to="/signup">
-        <span className="font-normal text-[14px] leading-[21px] tracking-normal underline text-[#1980E5]  "> Sign up</span>
-        </Link>
-        </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

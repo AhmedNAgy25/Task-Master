@@ -4,8 +4,7 @@ function Dashboard() {
   const stats = [
     { label: "Total Tasks", value: 120 },
     { label: "Completed Tasks", value: 85 },
-    { label: "Overdue Tasks", value: 15 },
-    { label: "In progress", value: 20 },
+    { label: "In progress Tasks", value: 20 },
   ];
   return (
     <>
