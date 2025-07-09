@@ -92,7 +92,7 @@ export default function TasksPage() {
                     className="edit-btn"
                     title="Edit task"
                   >
-                    ✏️
+                    ✏️Edit
                   </button>
                 </td>
               </tr>

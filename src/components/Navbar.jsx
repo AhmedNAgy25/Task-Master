@@ -6,25 +6,29 @@ export default function Navbar({ isAuthenticated, signOut }) {
   return (
     <nav className="w-full h-16 border-b border-gray-700 px-4 sm:px-8 py-3 bg-[#121417] flex justify-between items-center">
       <div className="flex items-center gap-4">
-        <div className="text-white text-xl">⏳</div>
+        <div className="text-white text-xl pb-[4px]">⏳</div>
         <div className="font-bold text-lg text-white">TaskMaster</div>
       </div>
 
       <div className="flex items-center gap-4">
-        {isAuthenticated ? (
+        {/* {isAuthenticated ? ( */
+        /*jsut for testig and navigation easly while styling*/}
+        {!isAuthenticated ? (
           <>
-            <Link
-              to="/dashboard"
-              className="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-gray-800"
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/tasks"
-              className="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-gray-800"
-            >
-              Tasks
-            </Link>
+            <div className="navigator">
+              <Link
+                to="/dashboard"
+                className="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-gray-800"
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/tasks"
+                className="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-gray-800"
+              >
+                Tasks
+              </Link>
+            </div>
             <button
               onClick={signOut}
               className="text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-gray-800"
