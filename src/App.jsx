@@ -20,9 +20,30 @@ const TEST_USER = {
   name: "Elmaka",
 };
 
+const INITIAL_TASKS = [
+  {
+    name: "Review project proposal",
+    date: "2024-03-15",
+    status: "inProgress",
+  },
+  {
+    name: "Prepare presentation slides",
+    date: "2024-03-20",
+    status: "completed",
+  },
+  { name: "Schedule team meeting", date: "2024-03-22", status: "inProgress" },
+  { name: "Update client report", date: "2024-03-25", status: "completed" },
+  {
+    name: "Follow up with vendors",
+    date: "2024-03-28",
+    status: "inProgress",
+  },
+];
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [tasks, setTasks] = useState(INITIAL_TASKS);
 
   const signIn = (email, password) => {
     if (email === TEST_USER.email && password === TEST_USER.password) {
@@ -63,7 +84,11 @@ function App() {
           path="/tasks"
           element={
             isAuthenticated ? (
-              <Tasks currentUser={currentUser} />
+              <Tasks
+                currentUser={currentUser}
+                tasks={tasks}
+                setTasks={setTasks}
+              />
             ) : (
               <Navigate to="/signin" />
             )
@@ -73,7 +98,11 @@ function App() {
           path="/createtask"
           element={
             isAuthenticated ? (
-              <Createtasks currentUser={currentUser} />
+              <Createtasks
+                currentUser={currentUser}
+                tasks={tasks}
+                setTasks={setTasks}
+              />
             ) : (
               <Navigate to="/signin" />
             )
@@ -83,7 +112,11 @@ function App() {
           path="/edittask/:taskIndex"
           element={
             isAuthenticated ? (
-              <EditTask currentUser={currentUser} />
+              <EditTask
+                currentUser={currentUser}
+                tasks={tasks}
+                setTasks={setTasks}
+              />
             ) : (
               <Navigate to="/signin" />
             )
