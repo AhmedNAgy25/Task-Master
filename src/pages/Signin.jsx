@@ -29,7 +29,7 @@ export default function Signin({ onSignIn, isAuthenticated }) {
       setIsLoading(false);
       return;
     }
-    const result = onSignIn(formData.email, formData.password);
+    const result = await onSignIn(formData.email, formData.password);
     if (result.success) {
       navigate("/dashboard");
     } else {
