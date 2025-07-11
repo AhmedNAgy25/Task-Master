@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+#environment variable
+.env
+.toBackendReport.md
+.TROUBLESHOOTING.md

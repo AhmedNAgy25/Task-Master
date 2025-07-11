@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import apiService from "../services/api";
 
-export default function Signup({ onSignUp }) {
+export default function Signup() {
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -34,7 +34,7 @@ export default function Signup({ onSignUp }) {
     setIsLoading(true);
 
     if (
-      !formData.username ||
+      !formData.name ||
       !formData.email ||
       !formData.password ||
       !formData.confirmPassword
@@ -60,7 +60,7 @@ export default function Signup({ onSignUp }) {
 
     try {
       const signupData = {
-        username: formData.username,
+        name: formData.name,
         email: formData.email,
         password: formData.password,
         password2: formData.confirmPassword,
@@ -68,17 +68,11 @@ export default function Signup({ onSignUp }) {
 
       const response = await apiService.signup(signupData);
 
-      // check token exist
-      const storedToken = apiService.getToken();
-
-      if (storedToken) {
-        if (onSignUp) {
-          onSignUp(response.data?.user || { email: formData.email });
-        }
-        navigate("/tasks");
+      if (response && response.data && response.data.user) {
+        // Signup successful, redirect to sign-in page
+        navigate("/signin", { state: { signupSuccess: true } });
       } else {
-        // no token exist 
-        setError("Failed to authenticate after signup. Please try signing in.");
+        setError("Signup failed. Please try again.");
       }
     } catch (error) {
       setError(error.message || "Failed to create account");
@@ -100,19 +94,19 @@ export default function Signup({ onSignUp }) {
         >
           <div className="flex flex-col gap-1">
             <label
-              htmlFor="username"
+              htmlFor="name"
               className="text-sm font-medium text-[#9EABB8]"
             >
-              Username
+              name
             </label>
             <input
-              id="username"
-              name="username"
+              id="name"
+              name="name"
               type="text"
               className="rounded-lg p-3 bg-[#23272f] text-[#9eabb8] focus:outline-none focus:ring-2 focus:ring-[#1a80e5]"
-              placeholder="Enter your username"
-              autoComplete="username"
-              value={formData.username}
+              placeholder="Enter your name"
+              autoComplete="name"
+              value={formData.name}
               onChange={handleChange}
             />
           </div>
