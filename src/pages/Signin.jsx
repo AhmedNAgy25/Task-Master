@@ -31,7 +31,7 @@ export default function Signin({ onSignIn, isAuthenticated }) {
     }
     const result = await onSignIn(formData.email, formData.password);
     if (result.success) {
-      navigate("/dashboard");
+      navigate("/tasks");
     } else {
       setError(result.error || "Login failed. Please try again.");
     }

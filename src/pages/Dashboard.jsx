@@ -1,9 +1,58 @@
-function Dashboard() {
-  const stats = [
-    { label: "Total Tasks", value: 120 },
-    { label: "Completed Tasks", value: 85 },
-    { label: "In progress Tasks", value: 20 },
-  ];
+import { useState, useEffect } from "react";
+import apiService from "../services/api";
+
+function Dashboard({ tasks }) {
+  const [stats, setStats] = useState([
+    { label: "Total Tasks", value: 0 },
+    { label: "Completed Tasks", value: 0 },
+    { label: "In Progress Tasks", value: 0 },
+  ]);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const response = await apiService.getDashboardData();
+        const dashboardStats = response.stats || response;
+
+        setStats([
+          {
+            label: "Total Tasks",
+            value: dashboardStats.totalTasks || tasks.length || 0,
+          },
+          {
+            label: "Completed Tasks",
+            value:
+              dashboardStats.completedTasks ||
+              tasks.filter((task) => task.isCompleted).length ||
+              0,
+          },
+          {
+            label: "In Progress Tasks",
+            value:
+              dashboardStats.inProgressTasks ||
+              tasks.filter((task) => !task.isCompleted).length ||
+              0,
+          },
+        ]);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+        // Fallback to local task data
+        setStats([
+          { label: "Total Tasks", value: tasks.length },
+          {
+            label: "Completed Tasks",
+            value: tasks.filter((task) => task.isCompleted).length,
+          },
+          {
+            label: "In Progress Tasks",
+            value: tasks.filter((task) => !task.isCompleted).length,
+          },
+        ]);
+      }
+    };
+
+    fetchDashboardData();
+  }, [tasks]);
 
   return (
     <div className="w-full min-h-screen bg-[#121417] text-white px-4 sm:px-8 lg:px-20 py-6 flex justify-center">

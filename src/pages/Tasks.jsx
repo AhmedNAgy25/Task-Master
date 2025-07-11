@@ -1,29 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function TasksPage() {
+export default function TasksPage({ tasks, deleteTask, completeTask }) {
   const [activeTab, setActiveTab] = useState("allTasks");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const tasks = [
-    {
-      name: "Review project proposal",
-      date: "2024-03-15",
-      status: "inProgress",
-    },
-    {
-      name: "Prepare presentation slides",
-      date: "2024-03-20",
-      status: "completed",
-    },
-    { name: "Schedule team meeting", date: "2024-03-22", status: "inProgress" },
-    { name: "Update client report", date: "2024-03-25", status: "completed" },
-    {
-      name: "Follow up with vendors",
-      date: "2024-03-28",
-      status: "inProgress",
-    },
-  ];
 
   const taskTabs = [
     { key: "allTasks", label: "All Tasks" },
@@ -31,10 +12,38 @@ export default function TasksPage() {
     { key: "completed", label: "Completed" },
   ];
 
+  const tasksArray = Array.isArray(tasks) ? tasks : [];
+
   const filteredTasks =
     activeTab === "allTasks"
-      ? tasks
-      : tasks.filter((task) => task.status === activeTab);
+      ? tasksArray
+      : tasksArray.filter((task) =>
+          activeTab === "completed" ? task.isCompleted : !task.isCompleted
+        );
+
+  const handleDeleteTask = async (taskId) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      setLoading(true);
+      try {
+        await deleteTask(taskId);
+      } catch (error) {
+        console.error("Failed to delete task:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleCompleteTask = async (taskId, isCompleted) => {
+    setLoading(true);
+    try {
+      await completeTask(taskId, { isCompleted });
+    } catch (error) {
+      console.error("Failed to update task status:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleNewTask = () => {
     navigate("/createtask");
@@ -77,59 +86,120 @@ export default function TasksPage() {
           <table className="min-w-full bg-[#181b20] rounded-xl text-left border-separate border-spacing-0">
             <thead>
               <tr className="bg-[#23272f] text-[#9EABB8]">
-                <th className="px-6 py-4 font-semibold rounded-tl-xl">Task</th>
-                <th className="px-6 py-4 font-semibold">End Date</th>
-                <th className="px-6 py-4 font-semibold">Edit</th>
-                <th className="px-6 py-4 font-semibold rounded-tr-xl">
+                <th className="px-6 py-4 font-semibold text-center rounded-tl-xl">
+                  Task
+                </th>
+                <th className="px-6 py-4 font-semibold text-center">
+                  End Date
+                </th>
+                <th className="px-6 py-4 font-semibold text-center">Edit</th>
+                <th className="px-6 py-4 font-semibold text-center rounded-tr-xl">
                   Status
                 </th>
               </tr>
             </thead>
             <tbody>
-              {filteredTasks.map((task, index) => (
+              {filteredTasks.map((task) => (
                 <tr
-                  key={index}
+                  key={task._id}
                   className="border-b border-[#23272f] last:border-b-0 hover:bg-[#202225] transition"
                 >
                   <td className="px-6 py-5 text-base text-white whitespace-nowrap">
-                    {task.name}
+                    {task.title}
                   </td>
-                  <td className="px-6 py-5 text-base text-[#9EABB8] whitespace-nowrap">
-                    {task.date}
+                  <td className="px-6 py-5 text-base text-[#9EABB8] whitespace-nowrap text-center">
+                    {console.log(task.endDate.slice(0, 10))}
+                    {task.endDate.slice(0, 10)}
                   </td>
                   <td className="px-6 py-5 text-center">
-                    <button
-                      onClick={() => handleEditTask(index)}
-                      className="border border-[#9EABB8] rounded-lg p-2 hover:bg-[#5d6472] hover:border-[#ffffff] transition"
-                      title="Edit task"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6 text-[#9EABB8] hover:text-white"
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => handleEditTask(task._id)}
+                        className="border border-[#9EABB8] rounded-lg p-2 hover:bg-[#5d6472] hover:border-[#ffffff] transition"
+                        title="Edit task"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M16.862 4.487a2.1 2.1 0 1 1 2.97 2.97L8.978 18.312a4.2 4.2 0 0 1-1.768 1.06l-3.07.92.92-3.07a4.2 4.2 0 0 1 1.06-1.768L16.862 4.487ZM16.862 4.487l2.65 2.65"
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-6 h-6 text-[#9EABB8] hover:text-white"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M16.862 4.487a2.1 2.1 0 1 1 2.97 2.97L8.978 18.312a4.2 4.2 0 0 1-1.768 1.06l-3.07.92.92-3.07a4.2 4.2 0 0 1 1.06-1.768L16.862 4.487ZM16.862 4.487l2.65 2.65"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleCompleteTask(task._id, !task.isCompleted)
+                        }
+                        className={`border rounded-lg p-2 transition ${
+                          task.isCompleted
+                            ? "border-yellow-500 hover:bg-yellow-500 hover:border-yellow-600"
+                            : "border-green-500 hover:bg-green-500 hover:border-green-600"
+                        }`}
+                        title={
+                          task.isCompleted
+                            ? "Mark as In Progress"
+                            : "Mark as Completed"
+                        }
+                        disabled={loading}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className={`w-6 h-6 ${
+                            task.isCompleted
+                              ? "text-yellow-500 hover:text-white"
+                              : "text-green-500 hover:text-white"
+                          }`}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteTask(task._id)}
+                        className="border border-red-500 rounded-lg p-2 hover:bg-red-500 hover:border-red-600 transition"
+                        title="Delete task"
+                        disabled={loading}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-6 h-6 text-red-500 hover:text-white"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </td>
                   <td className="px-6 py-5 text-center">
                     <span
                       className={`inline-block rounded-full px-6 py-2 font-semibold text-sm ${
-                        task.status === "completed"
-                          ? "bg-[#23272f] text-white"
-                          : "bg-[#23272f] text-white"
+                        task.isCompleted
+                          ? "bg-green-600 text-white"
+                          : "bg-yellow-600 text-white"
                       }`}
                     >
-                      {task.status === "inProgress"
-                        ? "In Progress"
-                        : "Completed"}
+                      {task.isCompleted ? "Completed" : "In Progress"}
                     </span>
                   </td>
                 </tr>

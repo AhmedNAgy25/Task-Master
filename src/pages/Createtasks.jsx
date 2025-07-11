@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Createtasks() {
+function Createtasks({ createTask }) {
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -10,32 +11,51 @@ function Createtasks() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTask((pre) => ({ ...pre, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
     setIsLoading(true);
+
     if (!task.title || !task.description || !task.startDate || !task.endDate) {
       setError("Please fill in all fields.");
       setIsLoading(false);
       return;
     }
+
     if (task.endDate < task.startDate) {
       setError("End date cannot be before start date.");
       setIsLoading(false);
       return;
     }
-    setTimeout(() => {
-      setSuccess("Task created successfully!");
-      setTask({ title: "", description: "", startDate: "", endDate: "" });
+
+    try {
+      const result = await createTask(task);
+      if (result.success) {
+        setSuccess("Task created successfully!");
+        setTask({ title: "", description: "", startDate: "", endDate: "" });
+        setTimeout(() => {
+          navigate("/tasks");
+        }, 1500);
+      } else {
+        setError(result.error || "Failed to create task");
+      }
+    } catch {
+      setError("An error occurred while creating the task");
+    } finally {
       setIsLoading(false);
-    }, 800);
+    }
+  };
+
+  const handleCancel = () => {
+    navigate("/tasks");
   };
 
   return (
@@ -110,13 +130,23 @@ function Createtasks() {
             {success}
           </div>
         )}
-        <button
-          className="createtask-btn w-full h-[48px] mt-2 bg-[#1A80E5] rounded-lg font-bold text-[16px] leading-[21px] tracking-normal text-[#ffffff] hover:bg-[#176fc2] transition disabled:opacity-60"
-          type="submit"
-          disabled={isLoading}
-        >
-          {isLoading ? "Creating..." : "Create Task"}
-        </button>
+        <div className="flex flex-col sm:flex-row gap-4 mt-2">
+          <button
+            type="button"
+            className="w-full sm:w-auto bg-[#1A80E5] text-white font-bold px-6 py-3 rounded-lg hover:bg-[#176fc2] transition-colors"
+            onClick={handleCancel}
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+          <button
+            className="w-full sm:w-auto bg-[#1A80E5] text-white font-bold px-6 py-3 rounded-lg hover:bg-[#176fc2] transition-colors"
+            type="submit"
+            disabled={isLoading}
+          >
+            {isLoading ? "Creating..." : "Create Task"}
+          </button>
+        </div>
       </form>
     </div>
   );

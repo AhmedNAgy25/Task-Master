@@ -12,52 +12,141 @@ import Tasks from "./pages/Tasks";
 import Dashboard from "./pages/Dashboard";
 import Createtasks from "./pages/Createtasks";
 import EditTask from "./pages/EditTask";
-import { useState } from "react";
-
-const TEST_USER = {
-  email: "elmaka@system.intern",
-  password: "123456789",
-  name: "Elmaka",
-};
-
-const INITIAL_TASKS = [
-  {
-    name: "Review project proposal",
-    date: "2024-03-15",
-    status: "inProgress",
-  },
-  {
-    name: "Prepare presentation slides",
-    date: "2024-03-20",
-    status: "completed",
-  },
-  { name: "Schedule team meeting", date: "2024-03-22", status: "inProgress" },
-  { name: "Update client report", date: "2024-03-25", status: "completed" },
-  {
-    name: "Follow up with vendors",
-    date: "2024-03-28",
-    status: "inProgress",
-  },
-];
+import { useState, useEffect, useCallback } from "react";
+import apiService from "./services/api";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [tasks, setTasks] = useState([]);
 
-  const signIn = (email, password) => {
-    if (email === TEST_USER.email && password === TEST_USER.password) {
-      setIsAuthenticated(true);
-      setCurrentUser(TEST_USER);
-      return { success: true };
+  const fetchTasks = useCallback(async () => {
+    try {
+      const response = await apiService.getAllTasks();
+
+      let tasksArray = [];
+      if (Array.isArray(response)) {
+        tasksArray = response;
+      } else if (response && response.tasks && Array.isArray(response.tasks)) {
+        tasksArray = response.tasks;
+      } else if (response && response.data && Array.isArray(response.data)) {
+        tasksArray = response.data;
+      } else {
+        tasksArray = [];
+      }
+
+      setTasks(tasksArray);
+    } catch {
+      setTasks([]);
     }
-    return { success: false, error: "Invalid enter" };
+  }, []);
+
+  // Check if user is already authenticated on app load
+  useEffect(() => {
+    const token = apiService.getToken();
+    if (token) {
+      setIsAuthenticated(true);
+      // Fetch tasks when user is authenticated
+      fetchTasks();
+    }
+  }, [fetchTasks]);
+
+  const signIn = async (email, password) => {
+    try {
+      const response = await apiService.login({ email, password });
+      setIsAuthenticated(true);
+      setCurrentUser(response.user || { email });
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message || "Login failed" };
+    }
   };
 
   const signOut = () => {
     setIsAuthenticated(false);
     setCurrentUser(null);
+    apiService.removeToken();
   };
+
+  const createTask = useCallback(
+    async (taskData) => {
+      try {
+        const response = await apiService.createTask(taskData);
+        await fetchTasks();
+        return { success: true, data: response };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    },
+    [fetchTasks]
+  );
+
+  const updateTask = useCallback(
+    async (taskId, taskData) => {
+      try {
+        const updatedTaskData = {
+          title: taskData.title || "",
+          description: taskData.description || "",
+          startDate: taskData.startDate || "",
+          endDate: taskData.endDate || "",
+          isCompleted: taskData.isCompleted || false,
+        };
+
+        const response = await apiService.updateTask(taskId, updatedTaskData);
+        await fetchTasks();
+        return { success: true, data: response };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    },
+    [fetchTasks]
+  );
+
+  const deleteTask = useCallback(
+    async (taskId) => {
+      try {
+        await apiService.deleteTask(taskId);
+        await fetchTasks();
+        return { success: true };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    },
+    [fetchTasks]
+  );
+
+  const completeTask = useCallback(
+    async (taskId, taskData) => {
+      try {
+        const currentTask = tasks.find((task) => task._id === taskId);
+
+        if (!currentTask) {
+          throw new Error("Task not found");
+        }
+
+        const formatDate = (dateString) => {
+          if (!dateString) return "";
+          const date = new Date(dateString);
+          return date.toISOString().split("T")[0];
+        };
+
+        const updatedTaskData = {
+          title: currentTask.title || "",
+          description: currentTask.description || "",
+          startDate: formatDate(currentTask.startDate),
+          endDate: formatDate(currentTask.endDate),
+          isCompleted: taskData.isCompleted,
+        };
+
+        const response = await apiService.updateTask(taskId, updatedTaskData);
+        await fetchTasks();
+        return { success: true, data: response };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
+    },
+    [fetchTasks, tasks]
+  );
 
   return (
     <Router>
@@ -69,12 +158,26 @@ function App() {
             <Signin onSignIn={signIn} isAuthenticated={isAuthenticated} />
           }
         />
-        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/signup"
+          element={
+            <Signup
+              onSignUp={(userData) => {
+                setIsAuthenticated(true);
+                setCurrentUser(userData);
+                // Fetch tasks after successful signup
+                setTimeout(() => {
+                  fetchTasks();
+                }, 100);
+              }}
+            />
+          }
+        />
         <Route
           path="/dashboard"
           element={
             isAuthenticated ? (
-              <Dashboard currentUser={currentUser} />
+              <Dashboard currentUser={currentUser} tasks={tasks} />
             ) : (
               <Navigate to="/signin" />
             )
@@ -87,7 +190,8 @@ function App() {
               <Tasks
                 currentUser={currentUser}
                 tasks={tasks}
-                setTasks={setTasks}
+                deleteTask={deleteTask}
+                completeTask={completeTask}
               />
             ) : (
               <Navigate to="/signin" />
@@ -98,24 +202,20 @@ function App() {
           path="/createtask"
           element={
             isAuthenticated ? (
-              <Createtasks
-                currentUser={currentUser}
-                tasks={tasks}
-                setTasks={setTasks}
-              />
+              <Createtasks currentUser={currentUser} createTask={createTask} />
             ) : (
               <Navigate to="/signin" />
             )
           }
         />
         <Route
-          path="/edittask/:taskIndex"
+          path="/edittask/:taskId"
           element={
             isAuthenticated ? (
               <EditTask
                 currentUser={currentUser}
+                updateTask={updateTask}
                 tasks={tasks}
-                setTasks={setTasks}
               />
             ) : (
               <Navigate to="/signin" />
@@ -124,7 +224,22 @@ function App() {
         />
         <Route
           path="/"
-          element={<Navigate to={isAuthenticated ? "/dashboard" : "/signin"} />}
+          element={<Navigate to={isAuthenticated ? "/tasks" : "/signin"} />}
+        />
+        <Route
+          path="*"
+          element={
+            <div className="min-h-screen bg-[#121417] flex items-center justify-center">
+              <div className="text-white text-center">
+                <h1 className="text-2xl font-bold mb-4">
+                  404 - Page Not Found
+                </h1>
+                <p className="text-[#9EABB8]">
+                  The page you're looking for doesn't exist.
+                </p>
+              </div>
+            </div>
+          }
         />
       </Routes>
     </Router>

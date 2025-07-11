@@ -1,73 +1,84 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-const tasks = [
-  { name: "add feature", date: "2025-03-25", status: "completed" },
-  { name: "edit routing system", date: "2025-07-28", status: "inProgress" },
-  { name: "edit styling", date: "2025-03-25", status: "completed" },
-  { name: "fix logic", date: "2025-02-28", status: "inProgress" },
-  { name: "fix responsice", date: "2025-11-25", status: "inProgress" },
-  { name: "solve ton of conflicts", date: "2025-03-18", status: "inProgress" },
-  { name: "go to iti", date: "2025-03-05", status: "completed" },
-  { name: "i add anything", date: "2025-09-08", status: "inProgress" },
-];
-
-function EditTask() {
+function EditTask({ updateTask, tasks }) {
   const [task, setTask] = useState({
     title: "",
     description: "",
     startDate: "",
     endDate: "",
-    status: "inProgress",
+    isCompleted: false,
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { taskIndex } = useParams();
+  const { taskId } = useParams();
 
   useEffect(() => {
-    if (taskIndex && tasks[taskIndex]) {
-      const currentTask = tasks[taskIndex];
-      setTask({
-        title: currentTask.name,
-        description: currentTask.description || "",
-        startDate: currentTask.startDate || "",
-        endDate: currentTask.date,
-        status: currentTask.status,
-      });
+    if (taskId && tasks && tasks.length > 0) {
+      const foundTask = tasks.find((t) => t._id === taskId);
+
+      if (foundTask) {
+        const formatDateForInput = (dateString) => {
+          if (!dateString) return "";
+          const date = new Date(dateString);
+          return date.toISOString().split("T")[0];
+        };
+
+        setTask({
+          title: foundTask.title || "",
+          description: foundTask.description || "",
+          startDate: formatDateForInput(foundTask.startDate),
+          endDate: formatDateForInput(foundTask.endDate),
+          isCompleted: foundTask.isCompleted || false,
+        });
+      } else {
+        setError("Task not found");
+      }
     }
-  }, [taskIndex]);
+  }, [taskId, tasks]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTask((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
+
     if (!task.title || !task.endDate) {
       setError("Please fill in all required fields.");
       setIsLoading(false);
       return;
     }
+
     if (task.startDate && task.endDate && task.endDate < task.startDate) {
       setError("End date cannot be before start date.");
       setIsLoading(false);
       return;
     }
-    setTimeout(() => {
+
+    try {
+      const result = await updateTask(taskId, task);
+      if (result.success) {
+        navigate("/tasks");
+      } else {
+        setError(result.error || "Failed to update task");
+      }
+    } catch {
+      setError("An error occurred while updating the task");
+    } finally {
       setIsLoading(false);
-      navigate("/tasks");
-    }, 1000);
+    }
   };
 
   const handleCancel = () => {
     navigate("/tasks");
   };
 
-  if (!taskIndex || !tasks[taskIndex]) {
+  if (!taskId) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#121417] px-4 py-8">
         <h2 className="text-2xl font-bold text-white mb-2">Task not found</h2>
@@ -114,14 +125,19 @@ function EditTask() {
             Status
           </label>
           <select
-            name="status"
+            name="isCompleted"
             className="w-full p-4 rounded-2xl border-2 border-[#3D4754] bg-[#1C2126] text-[#ffffff] focus:border-[#1A80E5] focus:outline-none text-base"
-            value={task.status}
-            onChange={handleChange}
+            value={task.isCompleted.toString()}
+            onChange={(e) =>
+              setTask((prev) => ({
+                ...prev,
+                isCompleted: e.target.value === "true",
+              }))
+            }
             disabled={isLoading}
           >
-            <option value="inProgress">In Progress</option>
-            <option value="completed">Completed</option>
+            <option value="false">In Progress</option>
+            <option value="true">Completed</option>
           </select>
         </div>
         <div className="flex flex-col gap-2">
