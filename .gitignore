@@ -25,5 +25,3 @@ dist-ssr
 
 #environment variable
 .env
-.toBackendReport.md
-.TROUBLESHOOTING.md
